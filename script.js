@@ -3,18 +3,47 @@
 class Cell extends React.Component {
   constructor(props) {
     super(props);
+    this.handleClick = this.handleClick.bind(this);
+
     this.index = props.index;
+    this.state = {
+      empty: false,
+      justSown: true,
+      youngShoots: false,
+      almostRipe: false,
+      ripe: false,
+      cropSpoiled: false
+    };
   }
 
   render() {
+    const empty = this.state.empty ? 'empty' : '';
+    const justSown = this.state.justSown ? 'just-sown' : '';
+    const youngShoots = this.state.youngShoots ? 'young-shoots' : '';
+    const almostRipe = this.state.almostRipe ? 'almost-ripe' : '';
+    const ripe = this.state.ripe ? 'ripe' : '';
+    const cropSpoiled = this.state.cropSpoiled ? 'crop-spoiled' : '';
+
     return (
       <div
-        className='cell'>
-        {this.index}
+        className={`cell ${empty} ${justSown} ${youngShoots} ${almostRipe} ${ripe} ${cropSpoiled}`}
+        onClick={this.handleClick}>
       </div>
     );
   }
+  
+  handleClick() {
+    const newState = {};
+
+    Object.keys(this.state).forEach(key => {
+      newState[key] = false;
+    });
+
+    newState.empty = true;
+    this.setState(newState);
+  }
 }
+
 class Field extends React.Component {
   constructor(props) {
     super(props);
