@@ -4,5 +4,6 @@ $cell-side: 50px;
     width: $cell-side;
     height: $cell-side;
     background-color: white;
-    border: black 2px solid;
+    border: black 0.5px solid;
+    display: inline-block;
 }
