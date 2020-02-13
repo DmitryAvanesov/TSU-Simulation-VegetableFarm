@@ -1,0 +1,8 @@
+$cell-side: 50px;
+
+.cell {
+    width: $cell-side;
+    height: $cell-side;
+    background-color: white;
+    border: black 2px solid;
+}

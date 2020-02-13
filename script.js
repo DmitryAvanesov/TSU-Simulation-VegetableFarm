@@ -1,25 +1,15 @@
 'use strict';
 
-const e = React.createElement;
-
-class LikeButton extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { liked: false };
-  }
-
+class Cell extends React.Component {
   render() {
-    if (this.state.liked) {
-      return 'You liked this.';
-    }
+    return (
+      <div
+        className="cell"
+        onClick={() => { alert('Good') }}>
 
-    return e(
-      'button',
-      { onClick: () => this.setState({ liked: true }) },
-      'Like'
+      </div>
     );
   }
 }
 
-const domContainer = document.querySelector('#farm');
-ReactDOM.render(e(LikeButton), domContainer);
+ReactDOM.render(<Cell />, document.querySelector('#container-farm'));
