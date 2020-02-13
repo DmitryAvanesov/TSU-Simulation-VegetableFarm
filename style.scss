@@ -1,5 +1,13 @@
 $cell-side: 50px;
 
+* {
+    box-sizing: border-box;
+}
+
+.field-row {
+    height: $cell-side;
+}
+
 .cell {
     width: $cell-side;
     height: $cell-side;
@@ -13,4 +21,20 @@ $cell-side: 50px;
 
 .just-sown {
     background-color: black;
+}
+
+.young-shoots {
+    background-color: green;
+}
+
+.almost-ripe {
+    background-color: yellow;
+}
+
+.ripe {
+    background-color: red;
+}
+
+.crop-spoiled {
+    background-color: brown;
 }
