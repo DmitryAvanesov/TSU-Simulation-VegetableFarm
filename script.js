@@ -1,49 +1,28 @@
 'use strict';
 
-var budget = 0;
-
 class Cell {
-  constructor() {
-    this.age = 0;
-    this.ageOfYoungShoots = 5;
-    this.ageOfAlmostRipe = 15;
-    this.ageOfRipe = 20;
-    this.ageOfCropSpoiled = 30;
+  constructor(curEmpty, curAge) {
+    this.empty = curEmpty;
+    this.age = curAge;
+    this.ageOfYoungShoots = 25;
+    this.ageOfAlmostRipe = 150;
+    this.ageOfRipe = 200;
+    this.ageOfCropSpoiled = 300;
 
-    this.state = {
-      empty: true,
-      justSown: false,
-      youngShoots: false,
-      almostRipe: false,
-      ripe: false,
-      cropSpoiled: false
-    };
-  }
-
-  checkStateChanging(ui) {
-    if (!this.state.empty) {
-      this.age++;
-    }
-
-    if (this.age === this.ageOfYoungShoots) {
-      ui.changeState('youngShoots');
-    }
-    else if (this.age === this.ageOfAlmostRipe) {
-      ui.changeState('almostRipe');
-    }
-    else if (this.age === this.ageOfRipe) {
-      ui.changeState('ripe');
-    }
-    else if (this.age === this.ageOfCropSpoiled) {
-      ui.changeState('cropSpoiled');
-    }
+    this.stage =
+      this.empty ? 'empty' :
+        this.age < this.ageOfYoungShoots ? 'just-sown' :
+          this.age >= this.ageOfYoungShoots && this.age < this.ageOfAlmostRipe ? 'young-shoots' :
+            this.age >= this.ageOfAlmostRipe && this.age < this.ageOfRipe ? 'almost-ripe' :
+              this.age >= this.ageOfRipe && this.age < this.ageOfCropSpoiled ? 'ripe' :
+                'crop-spoiled';
   }
 
   handleClick(ui) {
     this.age = 0;
 
     if (ui.state.empty) {
-      ui.changeState('justSown');
+      ui.changeState('just-sown');
     }
     else {
       ui.changeState('empty');
@@ -54,16 +33,11 @@ class Cell {
 class Cell_UI extends React.Component {
   constructor(props) {
     super(props);
-    this.model = new Cell();
+    this.model = new Cell(props.emptiness, props.age);
 
     this.state = {
-      status: 'empty'
+      status: this.model.stage
     };
-
-    setInterval(() => {
-      this.model.checkStateChanging(this);
-
-    }, this.model.growingInterval);
   }
 
   render() {
@@ -89,20 +63,39 @@ class Cell_UI extends React.Component {
 
 class Field {
   constructor() {
-    this.fieldSideLength = 4;
+    this.numberOfCells = 16;
     this.cells = [];
-    this.time = 0;
+    this.cellData = [];
     this.timeIncreasingInterval = 100;
   }
 
-  increaseTime() {
+  createCells(ui) {
+    for (let cellIndex = 0; cellIndex < this.numberOfCells; cellIndex++) {
+      this.cellData.push({
+        empty: true,
+        age: 0
+      });
+
+      this.cells.push(ui.renderCell(cellIndex, this.cellData[cellIndex]));
+    }
+
+    return this.cells;
+  }
+
+  increaseTime(ui) {
     this.time++;
 
-    this.cells.forEach((row) => {
-      row.forEach((cell) => {
-        cell.setState('empty');
-      });
+    this.cells.forEach((_cell, index) => {
+      if (!this.cellData[index].empty) {
+        this.cells[index] = ui.renderCell(
+          index,
+          this.cellData[index].empty,
+          this.cellData[index].age
+        );
+      }
     });
+
+    ui.setState(this.cells);
   }
 }
 
@@ -111,48 +104,47 @@ class Field_UI extends React.Component {
     super(props);
     this.model = new Field();
 
+    this.state = {
+      cells: this.model.createCells(this)
+    };
+
+    this.model.createCells(this);
+
     setInterval(() => {
-      this.model.increaseTime();
+      this.model.increaseTime(this);
+
     }, this.model.timeIncreasingInterval);
   }
 
   render() {
-    for (let i = 0; i < this.model.fieldSideLength; i++) {
-      let rowCells = [];
-
-      for (let j = 0; j < this.model.fieldSideLength; j++) {
-        rowCells.push(this.renderCell(i * this.model.fieldSideLength + j));
-      }
-
-      this.model.cells.push(rowCells);
-    }
-
     return (
       <div className='field'>
         <div
           className='field-row'>
-          {this.cells[0]}
+          {this.state.cells.slice(0, 4)}
         </div>
         <div
           className='field-row'>
-          {this.cells[1]}
+          {this.state.cells.slice(4, 8)}
         </div>
         <div
           className='field-row'>
-          {this.cells[2]}
+          {this.state.cells.slice(8, 12)}
         </div>
         <div
           className='field-row'>
-          {this.cells[3]}
+          {this.state.cells.slice(12, 16)}
         </div>
       </div>
     );
   }
 
-  renderCell(newKey) {
+  renderCell(newKey, isEmpty, newAge = 0) {
     return (
       <Cell_UI
-        key={newKey} />
+        key={newKey}
+        emptiness={isEmpty}
+        age={newAge} />
     );
   }
 }
