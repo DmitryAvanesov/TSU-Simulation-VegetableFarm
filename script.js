@@ -1,39 +1,20 @@
 'use strict';
 
 class Cell {
-  constructor(curEmpty, curAge) {
-    this.empty = curEmpty;
-    this.age = curAge;
+  constructor(props) {
     this.ageOfYoungShoots = 25;
     this.ageOfAlmostRipe = 150;
     this.ageOfRipe = 200;
     this.ageOfCropSpoiled = 300;
 
-    this.stage =
-      this.empty ? 'empty' :
-        this.age < this.ageOfYoungShoots ? 'just-sown' :
-          this.age >= this.ageOfYoungShoots && this.age < this.ageOfAlmostRipe ? 'young-shoots' :
-            this.age >= this.ageOfAlmostRipe && this.age < this.ageOfRipe ? 'almost-ripe' :
-              this.age >= this.ageOfRipe && this.age < this.ageOfCropSpoiled ? 'ripe' :
-                'crop-spoiled';
-  }
-
-  handleClick(ui) {
-    this.age = 0;
-
-    if (ui.state.empty) {
-      ui.changeState('just-sown');
-    }
-    else {
-      ui.changeState('empty');
-    }
+    console.log(props.isEmpty);
   }
 }
 
 class Cell_UI extends React.Component {
   constructor(props) {
     super(props);
-    this.model = new Cell(props.emptiness, props.age);
+    this.model = new Cell(props);
 
     this.state = {
       status: this.model.stage
@@ -44,7 +25,7 @@ class Cell_UI extends React.Component {
     return (
       <div
         className={`cell ${this.state.status}`}
-        onClick={() => this.model.handleClick(this)}>
+        onClick={() => this.props.clickCallback(this.props.index)}>
       </div>
     );
   }
@@ -62,47 +43,64 @@ class Cell_UI extends React.Component {
 }
 
 class Field {
-  constructor() {
+  constructor(ui) {
+    this.ui = ui;
     this.numberOfCells = 16;
     this.cells = [];
     this.cellData = [];
-    this.timeIncreasingInterval = 100;
+    this.timeIncreasingInterval = 1000;
+
+    this.handleClick = this.handleClick.bind(this);
   }
 
-  createCells(ui) {
+  createCells() {
     for (let cellIndex = 0; cellIndex < this.numberOfCells; cellIndex++) {
       this.cellData.push({
         empty: true,
         age: 0
       });
 
-      this.cells.push(ui.renderCell(cellIndex, this.cellData[cellIndex]));
+      this.cells.push(this.ui.renderCell(
+        cellIndex,
+        this.cellData[cellIndex].empty,
+        this.cellData[cellIndex].age,
+        this.handleClick
+      ));
     }
 
     return this.cells;
   }
 
-  increaseTime(ui) {
+  increaseTime() {
     this.time++;
 
     this.cells.forEach((_cell, index) => {
       if (!this.cellData[index].empty) {
-        this.cells[index] = ui.renderCell(
+        this.cells[index] = this.ui.renderCell(
           index,
           this.cellData[index].empty,
-          this.cellData[index].age
+          ++this.cellData[index].age,
+          this.handleClick
         );
       }
     });
 
-    ui.setState(this.cells);
+    this.ui.setState(this.cells);
+  }
+
+  handleClick(index) {
+    this.cellData[index].empty = !this.cellData[index].empty;
+
+    if (this.cellData[index].empty) {
+      this.cellData[index].age = 0;
+    }
   }
 }
 
 class Field_UI extends React.Component {
   constructor(props) {
     super(props);
-    this.model = new Field();
+    this.model = new Field(this);
 
     this.state = {
       cells: this.model.createCells(this)
@@ -139,12 +137,14 @@ class Field_UI extends React.Component {
     );
   }
 
-  renderCell(newKey, isEmpty, newAge = 0) {
+  renderCell(newKey, newIsEmpty, newAge, newClickCallback) {
     return (
       <Cell_UI
         key={newKey}
-        emptiness={isEmpty}
-        age={newAge} />
+        index={newKey}
+        isEmpty={newIsEmpty}
+        age={newAge}
+        clickCallback={newClickCallback} />
     );
   }
 }
