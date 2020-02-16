@@ -1,9 +1,9 @@
 $cell-side: 50px;
+$field-side: $cell-side * 4;
 
 * {
     box-sizing: border-box;
 }
-
 
 .field-row {
     height: $cell-side;
@@ -40,10 +40,14 @@ $cell-side: 50px;
     }
 }
 
-
 .info {
     background-color: lightgray;
-    width: $cell-side * 4;
+    width: $field-side;
     padding: 5px;
+    margin-top: 10px;
+}
+
+.slider {
+    width: $field-side;
     margin-top: 10px;
 }

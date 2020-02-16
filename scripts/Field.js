@@ -13,10 +13,10 @@ class Field extends React.Component {
 
     this.model.createCells(this);
 
-    setInterval(() => {
+    this.timeIncreasingWrapper = setInterval(() => {
       this.model.increaseTime(this);
 
-    }, this.model.timeIncreasingInterval);
+    }, this.model.timeIncreasingInterval * (1 / this.model.initialPace));
   }
 
   render() {
@@ -38,6 +38,9 @@ class Field extends React.Component {
         <Info
           time={this.state.time}
           money={this.state.money} />
+
+        <PaceControl
+          slideCallback={this.model.handleSlide} />
       </div>
     );
   }

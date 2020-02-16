@@ -4,11 +4,11 @@ class CellModel {
   constructor(ui) {
     this.ui = ui;
     this.status = 'empty';
-    
-    this.ageOfYoungShoots = 30;
-    this.ageOfAlmostRipe = 150;
-    this.ageOfRipe = 200;
-    this.ageOfCropSpoiled = 300;
+
+    this.ageOfYoungShoots = 20;
+    this.ageOfAlmostRipe = 100;
+    this.ageOfRipe = 120;
+    this.ageOfCropSpoiled = 200;
   }
 
   setStatus() {

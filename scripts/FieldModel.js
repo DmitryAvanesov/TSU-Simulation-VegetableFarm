@@ -8,7 +8,8 @@ class FieldModel {
 
     this.numberOfCells = 16;
     this.initialAmountOfMoney = 100;
-    this.timeIncreasingInterval = 100;
+    this.initialPace = 50;
+    this.timeIncreasingInterval = 1000;
     this.moneyForEmpty = -2;
     this.moneyForAlmostRipe = 3;
     this.moneyForRipe = 5;
@@ -18,6 +19,7 @@ class FieldModel {
     this.money = this.initialAmountOfMoney;
 
     this.handleClick = this.handleClick.bind(this);
+    this.handleSlide = this.handleSlide.bind(this);
   }
 
   createCells() {
@@ -79,5 +81,14 @@ class FieldModel {
     else {
       alert('Your balance is negative\nGame over');
     }
+  }
+
+  handleSlide(pace) {
+    clearInterval(this.ui.timeIncreasingWrapper);
+
+    this.ui.timeIncreasingWrapper = setInterval(() => {
+      this.increaseTime();
+
+    }, this.timeIncreasingInterval * (1 / pace));
   }
 }
