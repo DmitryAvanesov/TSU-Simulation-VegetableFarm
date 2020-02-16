@@ -1,106 +1,54 @@
 'use strict';
 
-class Cell {
-  constructor(props) {
-    this.ageOfYoungShoots = 25;
-    this.ageOfAlmostRipe = 150;
-    this.ageOfRipe = 200;
-    this.ageOfCropSpoiled = 300;
 
-    console.log(props.isEmpty);
-  }
-}
-
-class Cell_UI extends React.Component {
+class Cell extends React.Component {
   constructor(props) {
     super(props);
-    this.model = new Cell(props);
-
-    this.state = {
-      status: this.model.stage
-    };
+    this.model = new CellModel(this);
   }
 
   render() {
+    this.model.setStatus();
+
+    if (this.props.index == 0) {
+      console.log(this.props.isEmpty);
+    }
+
     return (
       <div
-        className={`cell ${this.state.status}`}
+        className={`cell ${this.model.status}`}
         onClick={() => this.props.clickCallback(this.props.index)}>
       </div>
     );
   }
-
-  changeState(newStateKey) {
-    const newState = {};
-
-    Object.keys(this.state).forEach(key => {
-      newState[key] = false;
-    });
-
-    newState[newStateKey] = true;
-    this.setState(newState);
-  }
 }
 
-class Field {
+class CellModel {
   constructor(ui) {
     this.ui = ui;
-    this.numberOfCells = 16;
-    this.cells = [];
-    this.cellData = [];
-    this.timeIncreasingInterval = 1000;
+    this.status = 'empty';
 
-    this.handleClick = this.handleClick.bind(this);
+    this.ageOfYoungShoots = 30;
+    this.ageOfAlmostRipe = 150;
+    this.ageOfRipe = 200;
+    this.ageOfCropSpoiled = 300;
   }
 
-  createCells() {
-    for (let cellIndex = 0; cellIndex < this.numberOfCells; cellIndex++) {
-      this.cellData.push({
-        empty: true,
-        age: 0
-      });
-
-      this.cells.push(this.ui.renderCell(
-        cellIndex,
-        this.cellData[cellIndex].empty,
-        this.cellData[cellIndex].age,
-        this.handleClick
-      ));
-    }
-
-    return this.cells;
-  }
-
-  increaseTime() {
-    this.time++;
-
-    this.cells.forEach((_cell, index) => {
-      if (!this.cellData[index].empty) {
-        this.cells[index] = this.ui.renderCell(
-          index,
-          this.cellData[index].empty,
-          ++this.cellData[index].age,
-          this.handleClick
-        );
-      }
-    });
-
-    this.ui.setState(this.cells);
-  }
-
-  handleClick(index) {
-    this.cellData[index].empty = !this.cellData[index].empty;
-
-    if (this.cellData[index].empty) {
-      this.cellData[index].age = 0;
-    }
+  setStatus() {
+    this.status = this.ui.props.isEmpty ? 'empty' :
+      this.ui.props.age < this.ageOfYoungShoots ? 'just-sown' :
+        this.ui.props.age < this.ageOfAlmostRipe ? 'young-shoots' :
+          this.ui.props.age < this.ageOfRipe ? 'almost-ripe' :
+            this.ui.props.age < this.ageOfCropSpoiled ? 'ripe' :
+              'crop-spoiled';
   }
 }
 
-class Field_UI extends React.Component {
+
+class Field extends React.Component {
   constructor(props) {
     super(props);
-    this.model = new Field(this);
+    this.model = new FieldModel(this);
 
     this.state = {
       cells: this.model.createCells(this)
@@ -139,7 +87,7 @@ class Field_UI extends React.Component {
 
   renderCell(newKey, newIsEmpty, newAge, newClickCallback) {
     return (
-      <Cell_UI
+      <Cell
         key={newKey}
         index={newKey}
         isEmpty={newIsEmpty}
@@ -149,4 +97,62 @@ class Field_UI extends React.Component {
   }
 }
 
-ReactDOM.render(<Field_UI />, document.querySelector('#container-farm'));
+class FieldModel {
+  constructor(ui) {
+    this.ui = ui;
+    this.numberOfCells = 16;
+    this.cells = [];
+    this.cellData = [];
+    this.timeIncreasingInterval = 100;
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  createCells() {
+    for (let cellIndex = 0; cellIndex < this.numberOfCells; cellIndex++) {
+      this.cellData.push({
+        isEmpty: true,
+        age: 0
+      });
+
+      this.cells.push(this.ui.renderCell(
+        cellIndex,
+        this.cellData[cellIndex].isEmpty,
+        this.cellData[cellIndex].age,
+        this.handleClick
+      ));
+    }
+
+    return this.cells;
+  }
+
+  increaseTime() {
+    this.time++;
+
+    this.cells.forEach((_cell, index) => {
+      if (!this.cellData[index].isEmpty) {
+        this.cellData[index].age++;
+      }
+
+      this.cells[index] = this.ui.renderCell(
+        index,
+        this.cellData[index].isEmpty,
+        this.cellData[index].age,
+        this.handleClick
+      );
+    });
+
+    this.ui.setState(this.cells);
+  }
+
+  handleClick(index) {
+    this.cellData[index].isEmpty = !this.cellData[index].isEmpty;
+
+    if (this.cellData[index].isEmpty) {
+      this.cellData[index].age = 0;
+    }
+  }
+}
+
+
+ReactDOM.render(<Field />, document.querySelector('#container-farm'));
