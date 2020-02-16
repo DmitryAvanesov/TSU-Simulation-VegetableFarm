@@ -4,37 +4,46 @@ $cell-side: 50px;
     box-sizing: border-box;
 }
 
+
 .field-row {
     height: $cell-side;
+
+    .cell {
+        width: $cell-side;
+        height: $cell-side;
+        border: black 0.5px solid;
+        display: inline-block;
+    }
+
+    .empty {
+        background-color: white;
+    }
+    
+    .just-sown {
+        background-color: black;
+    }
+    
+    .young-shoots {
+        background-color: green;
+    }
+    
+    .almost-ripe {
+        background-color: yellow;
+    }
+    
+    .ripe {
+        background-color: red;
+    }
+    
+    .crop-spoiled {
+        background-color: brown;
+    }
 }
 
-.cell {
-    width: $cell-side;
-    height: $cell-side;
-    border: black 0.5px solid;
-    display: inline-block;
-}
 
-.empty {
-    background-color: white;
-}
-
-.just-sown {
-    background-color: black;
-}
-
-.young-shoots {
-    background-color: green;
-}
-
-.almost-ripe {
-    background-color: yellow;
-}
-
-.ripe {
-    background-color: red;
-}
-
-.crop-spoiled {
-    background-color: brown;
+.info {
+    background-color: lightgray;
+    width: $cell-side * 4;
+    padding: 5px;
+    margin-top: 10px;
 }

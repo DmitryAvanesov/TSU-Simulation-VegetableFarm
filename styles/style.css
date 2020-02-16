@@ -7,34 +7,41 @@
   height: 50px;
 }
 
-.cell {
+.field-row .cell {
   width: 50px;
   height: 50px;
   border: black 0.5px solid;
   display: inline-block;
 }
 
-.empty {
+.field-row .empty {
   background-color: white;
 }
 
-.just-sown {
+.field-row .just-sown {
   background-color: black;
 }
 
-.young-shoots {
+.field-row .young-shoots {
   background-color: green;
 }
 
-.almost-ripe {
+.field-row .almost-ripe {
   background-color: yellow;
 }
 
-.ripe {
+.field-row .ripe {
   background-color: red;
 }
 
-.crop-spoiled {
+.field-row .crop-spoiled {
   background-color: brown;
+}
+
+.info {
+  background-color: lightgray;
+  width: 200px;
+  padding: 5px;
+  margin-top: 10px;
 }
 /*# sourceMappingURL=style.css.map */
