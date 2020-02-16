@@ -62,17 +62,22 @@ class FieldModel {
   }
 
   handleClick(index, status) {
-    this.cellData[index].isEmpty = !this.cellData[index].isEmpty;
+    if (this.money >= 0) {
+      this.money +=
+        status === 'empty' ? this.moneyForEmpty :
+          status === 'almost-ripe' ? this.moneyForAlmostRipe :
+            status === 'ripe' ? this.moneyForRipe :
+              status === 'crop-spoiled' ? this.moneyForCropSpoiled :
+                0;
 
-    this.money +=
-      status === 'empty' ? this.moneyForEmpty :
-        status === 'almost-ripe' ? this.moneyForAlmostRipe :
-          status === 'ripe' ? this.moneyForRipe :
-            status === 'crop-spoiled' ? this.moneyForCropSpoiled :
-              0;
+      this.cellData[index].isEmpty = !this.cellData[index].isEmpty;
 
-    if (this.cellData[index].isEmpty) {
-      this.cellData[index].age = 0;
+      if (this.cellData[index].isEmpty) {
+        this.cellData[index].age = 0;
+      }
+    }
+    else {
+      alert('Your balance is negative\nGame over');
     }
   }
 }
