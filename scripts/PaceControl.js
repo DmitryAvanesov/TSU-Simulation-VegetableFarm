@@ -3,8 +3,6 @@
 class PaceControl extends React.Component {
   constructor(props) {
     super(props);
-
-    this.handleSlide = this.handleSlide.bind(this);
   }
 
   render() {
@@ -14,12 +12,8 @@ class PaceControl extends React.Component {
         type='range'
         min='1'
         max='20'
-        onChange={this.handleSlide}>
+        onChange={() => {this.props.slideCallback(event.target.value)}}>
       </input>
     );
-  }
-
-  handleSlide() {
-    this.props.slideCallback(event.target.value);
   }
 }
