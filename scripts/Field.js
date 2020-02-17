@@ -100,7 +100,5 @@ class Field extends React.Component {
       this.rerenderCells();
 
     }, this.model.timeIncreasingInterval * (1 / pace));
-
-    console.log(this.model.timeIncreasingInterval * (1 / pace));
   }
 }

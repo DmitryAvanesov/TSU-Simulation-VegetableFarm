@@ -7,7 +7,7 @@ class Cell extends React.Component {
   }
 
   render() {
-    this.model.setStatus();
+    this.setStatus();
 
     return (
       <div
@@ -15,5 +15,14 @@ class Cell extends React.Component {
         onClick={() => this.props.clickCallback(this.props.index, this.model.status)}>
       </div>
     );
+  }
+
+  setStatus() {
+    this.model.status = this.props.isEmpty ? 'empty' :
+      this.props.age < this.model.ageOfYoungShoots ? 'just-sown' :
+        this.props.age < this.model.ageOfAlmostRipe ? 'young-shoots' :
+          this.props.age < this.model.ageOfRipe ? 'almost-ripe' :
+            this.props.age < this.model.ageOfCropSpoiled ? 'ripe' :
+              'crop-spoiled';
   }
 }
